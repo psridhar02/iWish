@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const { getQuestions, postQuestion, postAnswer } = require('../controllers/forumController');
+const { getQuestions, postQuestion, postAnswer } = require('../controllers/forumController.js');
 
 router.get('/', getQuestions);
 router.post('/', auth, postQuestion); // create question
