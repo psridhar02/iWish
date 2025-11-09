@@ -2,11 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* base layer */
 @layer base {
+  html, body, #root { height: 100%; }
   body {
-    @apply bg-neutralSoft-50 text-gray-800 font-body;
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(180deg, #f6f1fa 0%, #efe8f8 100%); /* soft lavender */
+    color: #1f2937;
   }
-  h1, h2, h3 {
-    @apply font-heading;
+}
+
+/* components */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full text-white shadow-md transition transform hover:-translate-y-0.5;
+    background: linear-gradient(90deg, #7c3aed 0%, #ec4899 100%);
+  }
+  .card {
+    @apply bg-white rounded-2xl shadow-md overflow-hidden;
+  }
+  .card-img {
+    @apply w-full h-64 object-contain bg-neutral-50;
   }
 }

@@ -12,7 +12,7 @@ export default function ProductCard({ p, onAdd }) {
       <p className="text-lg font-bold text-gray-800">${p.price}</p>
       <div className="mt-3 flex items-center justify-between">
         <Link to={`/product/${p.id}`} className="text-sm text-gray-600 underline">Details</Link>
-        <button onClick={() => onAdd(p)} className="bg-iwish-500 text-white px-3 py-1 rounded">Save</button>
+        <button onClick={() => onAdd(p)} className="btn-primary">iWish</button>
       </div>
     </div>
   );
