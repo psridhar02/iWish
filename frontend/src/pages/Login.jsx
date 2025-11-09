@@ -1,34 +1,40 @@
 import React, { useState } from "react";
 import API from "../api";
-import { setToken, setUsername } from "../utils/auth";
+import {
+  setToken,
+  setUsername,
+  removeToken,
+  removeUsername,
+} from "../utils/auth";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../components/Toast"; // Hook is correctly imported
+import { useToast } from "../components/Toast";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const nav = useNavigate();
-
-  // 1. CALL THE HOOK HERE
   const { show } = useToast();
 
   const submit = async (e) => {
     e.preventDefault();
     try {
+      // clear any stale values before attempting login
+      removeToken();
+      removeUsername();
+
       const res = await API.post("/auth/login", { email, password });
       setToken(res.data.token);
-      setUsername(res.data.username || res.data.email);
-      // Optional: Add a success toast upon successful login
-      show(`Welcome back, ${res.data.username || res.data.email}!`);
+      setUsername(res.data.username);
+      show(`Welcome back, ${res.data.username}!`);
       nav("/");
     } catch (err) {
       console.error("Login error", err);
       const message =
         err?.response?.data?.msg || err.message || "Invalid credentials";
-      // 2. REPLACE alert(message) with show(..., 'error')
       show(message, "error");
     }
   };
+
   return (
     <div className="min-h-[70vh] flex items-center justify-center">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
@@ -47,9 +53,7 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className="w-full bg-pink-600 text-white px-4 py-3 rounded hover:bg-pink-700 transition">
-            Login
-          </button>
+          <button className="w-full btn-primary">Login</button>
         </form>
       </div>
     </div>
