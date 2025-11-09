@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-neutralSoft-50 text-gray-800 font-body;
+  }
+  h1, h2, h3 {
+    @apply font-heading;
+  }
+}

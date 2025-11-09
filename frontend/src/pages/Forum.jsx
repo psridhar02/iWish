@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import API from "../api";
 import { authHeaders, getToken } from "../utils/auth";
+import { useToast } from "../components/Toast"; // Hook is correctly imported
 
 export default function Forum() {
   const [qs, setQs] = useState([]);
@@ -9,31 +10,49 @@ export default function Forum() {
   const [body, setBody] = useState("");
   const [answerText, setAnswerText] = useState({}); // map qid->text
 
+  // 1. CALL THE HOOK HERE
+  const { show } = useToast();
+
   useEffect(() => {
     API.get("/forum").then((r) => setQs(r.data));
   }, []);
 
   const submitQ = async (e) => {
     e.preventDefault();
-    if (!getToken()) return alert("Please login");
-    await axios.post(
-      "http://localhost:5000/api/forum",
-      { title, body },
-      { headers: authHeaders() }
-    );
-    window.location.reload();
+    // 2. REPLACE alert("Please login") with show(...)
+    if (!getToken()) return show("Please login to post a question", "warning");
+
+    try {
+      await axios.post(
+        "http://localhost:5000/api/forum",
+        { title, body },
+        { headers: authHeaders() }
+      );
+      show("Question posted successfully!"); // Success toast
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      show("Error posting question", "error"); // Error toast
+    }
   };
 
   const submitA = async (qid) => {
-    if (!getToken()) return alert("Please login");
-    await axios.post(
-      `http://localhost:5000/api/forum/${qid}/answers`,
-      { text: answerText[qid] },
-      { headers: authHeaders() }
-    );
-    window.location.reload();
-  };
+    // 3. REPLACE alert("Please login") with show(...)
+    if (!getToken()) return show("Please login to submit an answer", "warning");
 
+    try {
+      await axios.post(
+        `http://localhost:5000/api/forum/${qid}/answers`,
+        { text: answerText[qid] },
+        { headers: authHeaders() }
+      );
+      show("Answer submitted!"); // Success toast
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      show("Error submitting answer", "error"); // Error toast
+    }
+  };
   return (
     <div>
       <h1 className="text-3xl font-bold mb-4">Community Forum</h1>
