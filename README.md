@@ -55,6 +55,6 @@ Users can:
 ---
 
 ## 🌐 View the Application
-**Live Website:** 
+**Live Website:** https://psridhar02.github.io/iWish/
 
 ---
