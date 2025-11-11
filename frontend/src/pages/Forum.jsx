@@ -2,15 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import API from "../api";
 import { authHeaders, getToken } from "../utils/auth";
-import { useToast } from "../components/Toast"; // Hook is correctly imported
+import { useToast } from "../components/Toast"; 
 
 export default function Forum() {
   const [qs, setQs] = useState([]);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [answerText, setAnswerText] = useState({}); // map qid->text
+  const [answerText, setAnswerText] = useState({}); 
 
-  // 1. CALL THE HOOK HERE
   const { show } = useToast();
 
   useEffect(() => {
@@ -19,7 +18,7 @@ export default function Forum() {
 
   const submitQ = async (e) => {
     e.preventDefault();
-    // 2. REPLACE alert("Please login") with show(...)
+
     if (!getToken()) return show("Please login to post a question", "warning");
 
     try {
@@ -28,16 +27,16 @@ export default function Forum() {
         { title, body },
         { headers: authHeaders() }
       );
-      show("Question posted successfully!"); // Success toast
+      show("Question posted successfully!"); 
       window.location.reload();
     } catch (err) {
       console.error(err);
-      show("Error posting question", "error"); // Error toast
+      show("Error posting question", "error"); 
     }
   };
 
   const submitA = async (qid) => {
-    // 3. REPLACE alert("Please login") with show(...)
+    
     if (!getToken()) return show("Please login to submit an answer", "warning");
 
     try {
@@ -46,11 +45,11 @@ export default function Forum() {
         { text: answerText[qid] },
         { headers: authHeaders() }
       );
-      show("Answer submitted!"); // Success toast
+      show("Answer submitted!"); 
       window.location.reload();
     } catch (err) {
       console.error(err);
-      show("Error submitting answer", "error"); // Error toast
+      show("Error submitting answer", "error"); 
     }
   };
   return (
