@@ -31,7 +31,9 @@ export default function Home() {
         setProducts(prods);
 
         // Extract unique categories
-        const cats = Array.from(new Set(prods.map((p) => p.category || "Uncategorized")));
+        const cats = Array.from(
+          new Set(prods.map((p) => p.category || "Uncategorized"))
+        );
         const allCats = ["All", ...cats];
         setCategories(allCats);
 
@@ -51,6 +53,10 @@ export default function Home() {
     const token = getToken();
     if (!token) return show("Please login to save items", "warning");
 
+    // Replace the whole try {...} block with:
+    show("Wishlist feature coming soon!");
+
+    /* Original block commented out
     try {
       await axios.post(
         "http://localhost:5000/api/wishlist",
@@ -72,6 +78,7 @@ export default function Home() {
       console.error(err);
       show("Error saving item", "error");
     }
+    */
   };
 
   return (

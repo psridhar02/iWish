@@ -1,4 +1,11 @@
 import axios from "axios";
-const API = axios.create({ baseURL: "http://localhost:5000/api" });
+
+const isLocal = window.location.hostname === "localhost";
+
+const API = axios.create({
+  baseURL: isLocal
+    ? "http://localhost:5000/api"
+    : "https://fakestoreapi.com", 
+});
 
 export default API;
