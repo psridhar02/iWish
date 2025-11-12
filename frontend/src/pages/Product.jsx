@@ -1,8 +1,9 @@
 // src/pages/Product.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import API from "../api";
-import axios from "axios";
+import FakeStoreAPI from "../api"; // Renamed API to FakeStoreAPI for clarity
+// import axios from 'axios'; // No longer needed
+import { BackendAPI } from "../api"; // Import BackendAPI
 import { authHeaders, getToken } from "../utils/auth";
 import { useToast } from "../components/Toast";
 
@@ -18,7 +19,8 @@ export default function Product() {
     setLoading(true);
     setError("");
     try {
-      const r = await API.get(`/products/${id}`);
+      // Use FakeStoreAPI for fetching product data
+      const r = await FakeStoreAPI.get(`/products/${id}`);
       setProd(r.data);
     } catch (err) {
       console.error("Product fetch error", err);
@@ -38,23 +40,30 @@ export default function Product() {
   const save = async () => {
     if (!getToken()) return show("Login to save", "warning");
 
-    // Comment this block for now
-    /*
     try {
-      await axios.post('http://localhost:5000/api/wishlist', {
-        productId: prod.id, title: prod.title, price: prod.price, image: prod.image, category: prod.category
-      }, { headers: authHeaders() });
-      
-      show('Saved to wishlist!');
-      
-      const count = Number(localStorage.getItem('wishlist_count') || 0) + 1;
-      localStorage.setItem('wishlist_count', String(count));
-    } catch (err) { 
-      console.error(err); 
-      show('Error saving item', 'error'); 
+      // Use BackendAPI for the POST request with relative path
+      await BackendAPI.post(
+        "/api/wishlist",
+        {
+          productId: prod.id,
+          title: prod.title,
+          price: prod.price,
+          image: prod.image,
+          category: prod.category,
+        },
+        { headers: authHeaders() }
+      );
+
+      // 3. REPLACE alert('Saved!') with show(...)
+      show("Saved to wishlist!");
+
+      const count = Number(localStorage.getItem("wishlist_count") || 0) + 1;
+      localStorage.setItem("wishlist_count", String(count));
+    } catch (err) {
+      console.error(err);
+      // 4. REPLACE alert('Error') with show(..., 'error')
+      show("Error saving item", "error");
     }
-    */
-    show("Wishlist feature coming soon!");
   };
 
   if (loading)

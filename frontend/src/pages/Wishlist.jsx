@@ -1,43 +1,55 @@
 // src/pages/Wishlist.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-// 1. Update imports to include getToken and getUsername
-import { authHeaders, getToken, getUsername } from "../utils/auth"; 
+// import axios from "axios"; // No longer needed, can be removed
+
+// Use the new BackendAPI instance
+import { BackendAPI } from "../api";
+
+// Update imports to include all necessary auth helpers
+import { authHeaders, getToken, getUsername } from "../utils/auth";
 import { useToast } from "../components/Toast";
+
 export default function Wishlist() {
   const [items, setItems] = useState([]);
-  
-  // 2. Get the username
-  const username = getUsername(); 
+  const { show } = useToast();
+
+  // Get the username
+  const username = getUsername();
 
   useEffect(() => {
-    // Note: It's good practice to check for a token before fetching
-    const token = getToken(); 
+    const token = getToken();
     if (!token) return setItems([]);
-    
-    axios
-      .get("http://localhost:5000/api/wishlist", { headers: authHeaders() })
+
+    // Re-enabled logic using the new BackendAPI instance and correct relative path
+    BackendAPI.get("/api/wishlist", { headers: authHeaders() })
       .then((r) => setItems(r.data))
-      .catch(() => setItems([]));
-  }, []);
+      .catch(() => {
+        setItems([]);
+        show("Could not fetch wishlist items.", "error");
+      });
+  }, [show]);
 
   const remove = async (id) => {
+    // Re-enabled the remove functionality
     try {
-      await axios.delete(`http://localhost:5000/api/wishlist/${id}`, {
+      // Use the BackendAPI instance with the correct relative path
+      await BackendAPI.delete(`/api/wishlist/${id}`, {
         headers: authHeaders(),
       });
       setItems(items.filter((i) => i._id !== id));
+      show("Item removed from wishlist.", "success");
     } catch (err) {
       console.error(err);
+      show("Error removing item", "error");
     }
   };
 
-  // 3. Update the return structure
+  // Update the return structure to use the username
   return (
-    <div className="container mx-auto px-4 py-8"> 
+    <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-4">
         {/* Dynamically show username or default title */}
-        {username ? `${username} wished for...` : 'My Wishlist'} 
+        {username ? `${username}'s Wishlist` : "My Wishlist"}
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {items.map((it) => (

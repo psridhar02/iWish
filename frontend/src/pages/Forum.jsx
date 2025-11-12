@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import API from "../api";
+// import axios from "axios"; // No longer needed
+import { BackendAPI } from "../api"; // Import BackendAPI
 import { authHeaders, getToken } from "../utils/auth";
-import { useToast } from "../components/Toast"; 
+import { useToast } from "../components/Toast";
 
 export default function Forum() {
   const [qs, setQs] = useState([]);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [answerText, setAnswerText] = useState({}); 
+  const [answerText, setAnswerText] = useState({});
 
   const { show } = useToast();
 
   useEffect(() => {
-    API.get("/forum").then((r) => setQs(r.data));
+    // Use BackendAPI for the GET request
+    BackendAPI.get("/api/forum").then((r) => setQs(r.data));
   }, []);
 
   const submitQ = async (e) => {
@@ -22,34 +23,35 @@ export default function Forum() {
     if (!getToken()) return show("Please login to post a question", "warning");
 
     try {
-      await axios.post(
-        "http://localhost:5000/api/forum",
+      // Use BackendAPI for the POST request with relative path
+      await BackendAPI.post(
+        "/api/forum",
         { title, body },
         { headers: authHeaders() }
       );
-      show("Question posted successfully!"); 
+      show("Question posted successfully!");
       window.location.reload();
     } catch (err) {
       console.error(err);
-      show("Error posting question", "error"); 
+      show("Error posting question", "error");
     }
   };
 
   const submitA = async (qid) => {
-    
     if (!getToken()) return show("Please login to submit an answer", "warning");
 
     try {
-      await axios.post(
-        `http://localhost:5000/api/forum/${qid}/answers`,
+      // Use BackendAPI for the POST request with relative path
+      await BackendAPI.post(
+        `/api/forum/${qid}/answers`,
         { text: answerText[qid] },
         { headers: authHeaders() }
       );
-      show("Answer submitted!"); 
+      show("Answer submitted!");
       window.location.reload();
     } catch (err) {
       console.error(err);
-      show("Error submitting answer", "error"); 
+      show("Error submitting answer", "error"); // Error toast
     }
   };
   return (

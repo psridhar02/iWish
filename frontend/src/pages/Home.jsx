@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
-import API from "../api";
+// 1. Rename import API to FakeStoreAPI for clarity
+import FakeStoreAPI from "../api";
 import ProductCard from "../components/ProductCard";
 import { authHeaders, getToken } from "../utils/auth";
-import axios from "axios";
+// 2. Import the new BackendAPI
+import { BackendAPI } from "../api";
+
+// import axios from "axios"; // No longer needed, can be removed
 import Hero from "../components/Hero";
 import { useToast } from "../components/Toast";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -25,7 +29,8 @@ export default function Home() {
 
   // Fetch products and categories
   useEffect(() => {
-    API.get("/products")
+    // 3. Use the clearer FakeStoreAPI instance
+    FakeStoreAPI.get("/products")
       .then((res) => {
         const prods = res.data || [];
         setProducts(prods);
@@ -53,32 +58,22 @@ export default function Home() {
     const token = getToken();
     if (!token) return show("Please login to save items", "warning");
 
-    // Replace the whole try {...} block with:
-    show("Wishlist feature coming soon!");
-
-    /* Original block commented out
+    // Re-enabled logic using the new BackendAPI instance and correct relative path
     try {
-      await axios.post(
-        "http://localhost:5000/api/wishlist",
-        {
-          productId: p.id,
-          title: p.title,
-          price: p.price,
-          image: p.image,
-          category: p.category,
-        },
+      // Use the BackendAPI instance
+      await BackendAPI.post(
+        "/api/wishlist",
+        { product: p },
         { headers: authHeaders() }
       );
 
-      const currentCount = parseInt(localStorage.getItem("wishlist_count") || "0", 10);
-      localStorage.setItem("wishlist_count", currentCount + 1);
-
       show("Saved to wishlist!");
+      // const count = parseInt(localStorage.getItem("wishlist_count") || "0", 10); // Current logic needs adjustment for currentCount
+      // localStorage.setItem("wishlist_count", currentCount + 1);
     } catch (err) {
       console.error(err);
       show("Error saving item", "error");
     }
-    */
   };
 
   return (
